@@ -608,7 +608,7 @@ async function uploadXL(file){
     // Send raw file to API — Python handles all parsing
     const fd=new FormData();
     fd.append('file',file);
-    const res=await fetch('http://localhost:8000/plan/upload-xlsx',{method:'POST',body:fd});
+    const res=await fetch('http://web-production-9727d.up.railway.app/upload-xlsx',{method:'POST',body:fd});
     const d=await res.json();
     if(!res.ok){toast('Upload error: '+(d.detail||JSON.stringify(d)),'er');uz.style.borderColor='';return;}
     // Also parse locally so the UI updates immediately
@@ -847,7 +847,7 @@ function saveActual(i,date,line,jobNo,target){
     if(!rv){cerrEl.textContent='Select a reason for not producing';return;}
     const key=`${date}|${line}|${jobNo}`;
     acts[key]={notProduced:true,actual:null,reason:rv,remark:remV};
-    fetch('http://localhost:8000/actuals',{
+    fetch('http://web-production-9727d.up.railway.app/actuals',{
       method:'PUT',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({date,line,job_no:jobNo,actual_qty:null,not_produced:true,
                            period_from:null,period_to:null,batch_no:null,reason:rv,remark:remV||null})
@@ -900,7 +900,7 @@ function saveActual(i,date,line,jobNo,target){
   toast('Saved — '+jobNo.slice(0,22));
   rSupPage();
 
-  fetch('http://localhost:8000/actuals',{
+  fetch('http://web-production-9727d.up.railway.app/actuals',{
     method:'PUT',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
       date,line,job_no:jobNo,
@@ -924,7 +924,7 @@ async function submitAll(){
   const unsaved=planned.filter(r=>!acts[`${date}|${line}|${r.jobNo}`]);
   if(unsaved.length){toast(`${unsaved.length} SKU(s) not yet saved`,'er');return;}
   try{
-    await fetch('http://localhost:8000/actuals/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:date,line:line})});
+    await fetch('http://web-production-9727d.up.railway.app/actuals/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:date,line:line})});
   }catch(e){console.error('Submit API error:',e);}
   toast('All actuals submitted ✓');
   setTimeout(()=>showPage('dashboard'),700);
